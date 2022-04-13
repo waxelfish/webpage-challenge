@@ -1,0 +1,9 @@
+---
+- hosts: all
+  become: yes
+
+  tasks: 
+    - name: download static web page from bitbucket
+      ansible.builtin.get_url:
+        url: "https://bitbucket.org/bjgiller/evt-tech-challenge/raw/master/evt-web.html"
+        dest: "/var/www/html/index.html"
