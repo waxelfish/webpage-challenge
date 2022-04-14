@@ -69,6 +69,11 @@ The deployed website can be viewed in a the webbrower via:
 `https://Ephemeral_External_IP`
 
 
+Although not implemented in this challenge, the Terraform Cloud DNS resource (https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/dns_record_set)
+can add an A record for the VM instance to a GCP managed DNS zone. 
+
+Note: Setting up a managed GCP DNS zone was outside of the scope of this challenge, and would also incur additional costs.
+
 ## Cleanup
 
 > $ terraform apply -destroy
