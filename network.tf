@@ -1,4 +1,6 @@
 # firewall rules
+
+# Allow ingress ssh
 resource "google_compute_firewall" "filewall-ssh-rule" {
   name    = "terraform-network-firewall-allow-ssh"
   network = google_compute_network.vpc_network.name
@@ -13,6 +15,7 @@ resource "google_compute_firewall" "filewall-ssh-rule" {
   source_tags = ["ssh"]
 }
 
+# Allow ingress http/https
 resource "google_compute_firewall" "filewall-web-rule" {
   name    = "terraform-network-firewall-allow-web"
   network = google_compute_network.vpc_network.name
@@ -28,6 +31,7 @@ resource "google_compute_firewall" "filewall-web-rule" {
 }
 
 
+# Allow ingress ping
 resource "google_compute_firewall" "firewall-icmp-rule" {
   name    = "terraform-network-firewall-allow-icmp"
   network = google_compute_network.vpc_network.name
@@ -41,6 +45,7 @@ resource "google_compute_firewall" "firewall-icmp-rule" {
   source_tags = ["icmp"]
 }
 
+# Allow ingress from GCP internal services
 resource "google_compute_firewall" "firewall-internal-rule" {
   name    = "terraform-network-firewall-allow-internal"
   network = google_compute_network.vpc_network.name

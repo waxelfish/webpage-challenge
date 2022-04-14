@@ -4,6 +4,7 @@ data "google_compute_image" "linux_image" {
   project = var.image_project
 }
 
+# data source for cloud init script
 data "cloudinit_config" "conf" {
   gzip          = false
   base64_encode = false

@@ -6,4 +6,5 @@
       debug:
        msg: 
          - "Inventory Hostname: {{ inventory_hostname }}"
-         - "Inventory IP: {{ hostvars[inventory_hostname].ansible_host }}"
+         - "Inventory Remote Host: {{ hostvars[inventory_hostname].ansible_host }}"
+         - "Inventory VARs: {{ hostvars[inventory_hostname] }}"

@@ -11,28 +11,26 @@ resource "google_compute_instance" "vm_instance" {
     }
   }
 
-  # place GCP specific SSH key on VM
-  # not necessary as key is stored in console and will be added to VM automatically
+  # GCP specific SSH key on VM is stored in console and will be added to VM automatically
   metadata = {
-    #  ssh-keys = "axel:${file("./google_compute_engine.pub")}"
     user-data = "${data.cloudinit_config.conf.rendered}"
   }
 
   network_interface {
     network = google_compute_network.vpc_network.name
-    #network = "default"
     access_config {
       // Ephemeral public IP
     }
   }
 
   provisioner "local-exec" {
-    command = <<EOT
+    interpreter = ["/bin/bash", "-c"]
+    command     = <<EOT
+    echo "webserver ansible_host=${google_compute_instance.vm_instance.network_interface.0.access_config.0.nat_ip}" > inv
+    echo -e "\n\n[all:vars]\nPKI_DIR=\"./pki\"\n" >> inv
     ssh-keyscan -t ecdsa -H ${google_compute_instance.vm_instance.network_interface.0.access_config.0.nat_ip} >> ~/.ssh/known_hosts
-    echo "webserver PKI_DIR=\"./pki\" ansible_host=${google_compute_instance.vm_instance.network_interface.0.access_config.0.nat_ip}" > inv
+    ansible-playbook -i inv local_playbook.yml --tags pki -e "gcp_ip_address=${google_compute_instance.vm_instance.network_interface.0.access_config.0.nat_ip}"
+    ansible-playbook -i inv playbook.yml
     EOT
   }
 }
-
-#     ansible-playbook -i inv local_playbook.yml --tags pki -e "gcp_ip_address=${google_compute_instance.vm_instance.network_interface.0.access_config.0.nat_ip}"
-#    ssh-keyscan -t dsa -H ${google_compute_instance.vm_instance.network_interface.0.access_config.0.nat_ip} >> ~/.ssh/known_hosts

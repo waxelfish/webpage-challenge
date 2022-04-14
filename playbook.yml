@@ -7,10 +7,25 @@
       ansible.builtin.get_url:
         url: "https://bitbucket.org/bjgiller/evt-tech-challenge/raw/master/evt-web.html"
         dest: "/var/www/html/index.html"
+        owner: root
+        group: root
+        mode: 0644
       tags:
         - webpage
 
-    - name: Copy SSL key and x509 cert to destination
+    - name: Create SSL destnation directory
+      ansible.builtin.file:
+        path: "/etc/nginx/ssl/"
+        owner: root
+        group: root
+        state: directory
+        mode: 0755
+      tags:
+        - ssl
+      notify:
+      - Restart nginx
+
+    - name: Copy SSL server key and x509 certificate to destination
       ansible.builtin.copy:
         src: "{{ item }}"
         dest: "/etc/nginx/ssl/"
@@ -25,8 +40,8 @@
       notify:
       - Restart nginx
 
-    - name: Copy ssl config
-      copy:
+    - name: Copy SSL config
+      ansible.builtin.copy:
         src: "./ssl"
         dest: "/etc/nginx/sites-available/"
         owner: root
@@ -37,7 +52,7 @@
       notify:
       - Restart nginx
 
-    - name: Enable ssl server
+    - name: Enable SSL server
       ansible.builtin.file:
         state: link
         src: "/etc/nginx/sites-available/ssl"
