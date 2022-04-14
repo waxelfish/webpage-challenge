@@ -3,6 +3,15 @@
   become: yes
 
   tasks:
+
+    - name: Install Nginx package
+      ansible.builtin.apt:
+        name: nginx
+        state: latest
+        update_cache: yes
+      notify:
+      - Restart nginx
+
     - name: Download static web page from bitbucket
       ansible.builtin.get_url:
         url: "https://bitbucket.org/bjgiller/evt-tech-challenge/raw/master/evt-web.html"
@@ -13,7 +22,7 @@
       tags:
         - webpage
 
-    - name: Create SSL destnation directory
+    - name: Create SSL destination directory
       ansible.builtin.file:
         path: "/etc/nginx/ssl/"
         owner: root

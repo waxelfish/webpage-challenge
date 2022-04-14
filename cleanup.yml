@@ -3,6 +3,9 @@
   connection: local
   gather_facts: no
 
+  vars:
+    ssh_known_hosts_file: "{{ lookup('env','HOME') + '/.ssh/known_hosts' }}"
+
   tasks: 
     - name: Display all variables/facts known for a host
       ansible.builtin.debug:
@@ -19,9 +22,18 @@
       tags:
         - cleanup
 
+    - name: Remove the public key in the '{{ ssh_known_hosts_file }}'
+      known_hosts:
+        name: "{{ gcp_ip_address }}"
+        path: "{{ ssh_known_hosts_file }}"
+        state: absent
+      tags:
+        - cleanup
+
     - name: Remove inventory file
       ansible.builtin.file:
         path: "./inv"
         state: absent
       tags:
         - cleanup
+
