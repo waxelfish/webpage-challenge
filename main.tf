@@ -26,6 +26,19 @@ resource "google_compute_instance" "vm_instance" {
     }
   }
 
+
+  provisioner "remote-exec" {
+    connection {
+      type        = "ssh"
+      user        = var.project_username
+      host        = self.network_interface[0].access_config[0].nat_ip
+      private_key = file(var.project_user_privkey_file)
+    }
+
+    inline = ["sleep 5"]
+  }
+
+
   provisioner "local-exec" {
     interpreter = ["/bin/bash", "-c"]
     command     = <<EOT

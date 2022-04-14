@@ -7,6 +7,14 @@ variable "credentials_file" {
   description = "Path to GCP credentials file"
 }
 
+variable "project_user_privkey_file" {
+  description = "Path to private key file for project user"
+}
+
+variable "project_username" {
+  description = "Name of the GCP cloud project user"
+}
+
 variable "region" {
   description = "Default Region"
   default     = "us-central1"

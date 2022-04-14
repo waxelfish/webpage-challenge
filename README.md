@@ -18,13 +18,19 @@ Deployment and configuration of the GCP cloud resources requires a local install
 The following two Terraform variables need to be specified in order for the deployment to succeed:
 
 - ***project***: Name of the GCP project to deploy into 
-- ***credential_file***: path to a valid GCP credential file for the above project in JSON format
+- ***credential_file***: Path to a valid GCP credential file for the above project in JSON format
+- ***project_username***: Name of the GCP cloud project user
+- ***project_user_privkey_file***: Path to private key file for project user
 
 This can be done by either directly editing **terraform.tfvars** or by providing the following **TF_VAR_** environment variables, exported in BASH prior to Terraform deployment via
 
 > $ export TF_VAR_project=name of GCP project
 
 > $ export TF_VAR_credentials_file=path to file
+
+> $ export TF_VAR_project_username=username
+
+> $ export TF_VAR_project_user_privkey_file=path to file
 
 
 Alternatively, if not previously defined, `terraform plan|apply` will prompt for both before running.
