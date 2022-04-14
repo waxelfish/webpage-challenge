@@ -17,10 +17,10 @@ Deployment and configuration of the GCP cloud resources requires a local install
 
 The following two Terraform variables need to be specified in order for the deployment to succeed:
 
-- project
-- credential_file
+- ***project***: Name of the GCP project to deploy into 
+- ***credential_file***: path to a valid GCP credential file for the above project in JSON format
 
-This can be done by either directly editing **terraform.ftvars** or by providing the following **TF_VAR_** environment variables, exported prior to Terraform deployment via
+This can be done by either directly editing **terraform.tfvars** or by providing the following **TF_VAR_** environment variables, exported in BASH prior to Terraform deployment via
 
 > $ export TF_VAR_project=name of GCP project
 
@@ -29,7 +29,7 @@ This can be done by either directly editing **terraform.ftvars** or by providing
 
 Alternatively, if not previously defined, `terraform plan|apply` will prompt for both before running.
 
-Note: The GCP credentials file must be in valid JSON format, generated and downloaded in the GCP console.
+Note: The GCP credentials file must be in valid JSON format, generated in the GCP console and downloaded to the local system.
 
 ## Initialization
 
@@ -43,9 +43,9 @@ This will download the required providers and provisioners into the `.terraform`
 
 > $ terraform apply
 
-The deployment will create the following GCP cloud resources in the `us-central1` region (defaults in `variables.tf`):
+The deployment will create the following GCP cloud resources in the `us-central1` region (defaults defined in `variables.tf`):
 
-- **e2-micro** VM instance (most recent Ubuntu 20.04 LTS AMI image, default disto defined in `variables.tf`)
+- **e2-micro** VM instance (most recent Ubuntu 20.04 LTS AMI image)
 - custom network
 - firewall rules, allowing access via ICMP, SSH, HTTP, and HTTPS
 

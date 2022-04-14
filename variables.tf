@@ -1,6 +1,6 @@
 # variables declaraion
 variable "project" {
-  description = "Project name"
+  description = "GCP Project name"
 }
 
 variable "credentials_file" {
