@@ -13,6 +13,8 @@ Deployment and configuration of the GCP cloud resources requires a local install
 - Ansible (>= v2.10.x)
 
 
+## Configuration
+
 The following two Terraform variables need to be specified in order for the deployment to succeed:
 
 - project
@@ -27,7 +29,7 @@ This can be done by either directly editing **terraform.ftvars** or by providing
 
 Alternatively, if not previously defined, `terraform plan|apply` will prompt for both before running.
 
-Note: The GCP credentials file must be in valid JSON format.
+Note: The GCP credentials file must be in valid JSON format, generated and downloaded in the GCP console.
 
 ## Initialization
 
@@ -41,11 +43,11 @@ This will download the required providers and provisioners into the `.terraform`
 
 > $ terraform apply
 
-The deployment will create the following GCP cloud resources in the `us-central1` region (defaults in `varibles.tf`):
+The deployment will create the following GCP cloud resources in the `us-central1` region (defaults in `variables.tf`):
 
-- **e2-micro** VM instance (existing Ubuntu AMI instance, default disto defined in `variables.tf`)
+- **e2-micro** VM instance (most recent Ubuntu 20.04 LTS AMI image, default disto defined in `variables.tf`)
 - custom network
-- firewall rules, allowing access via SSH, HTTP, and HTTPS
+- firewall rules, allowing access via ICMP, SSH, HTTP, and HTTPS
 
 Utilizing a local provisioner, the deployment will then create SSL keys and x509 certificates in the main project directory in the `./pki` folder via 
 a local Ansible playbook.
