@@ -1,0 +1,82 @@
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  vars:
+    PKI_DIR: "./pki"
+
+  tasks: 
+    - name: Create PKI directory
+      file:
+        path: './pki'
+        state: directory
+      tags:
+        - pki
+
+    ## Create CA
+    - name: Generate CA private key
+      openssl_privatekey:
+        path: '{{ PKI_DIR }}/ca-key.pem'
+      tags:
+        - pki
+
+    - name: Generate CA CSR
+      openssl_csr:
+        path: '{{ PKI_DIR }}/ca.csr'
+        privatekey_path: '{{ PKI_DIR }}/ca-key.pem'
+        basic_constraints: "CA:TRUE"
+        basic_constraints_critical: True
+        key_usage: 
+          - cRLSign
+          - keyCertSign
+        key_usage_critical: True
+        organizational_unit_name: 'EVT Challenge'
+        common_name: CA
+      tags:
+        - pki
+
+    - name: Generate CA certificate
+      openssl_certificate:
+        path: '{{ PKI_DIR }}/ca.pem'
+        privatekey_path: '{{ PKI_DIR }}/ca-key.pem'
+        csr_path: '{{ PKI_DIR }}/ca.csr'
+        provider: selfsigned
+      tags:
+        - pki
+
+    ## kube api-server keys/certs
+    - name: Generate Web Server private key
+      openssl_privatekey:
+        path: '{{ PKI_DIR }}/server-key.pem'
+      tags:
+        - pki
+
+    - name: Generate Web Server CSR
+      openssl_csr:
+        path: '{{ PKI_DIR }}/server.csr'
+        privatekey_path: '{{ PKI_DIR }}/server-key.pem'
+        basic_constraints: "CA:FALSE"
+        basic_constraints_critical: True
+        key_usage: 
+          - digitalSignature
+          - keyEncipherment
+        key_usage_critical: True
+        extended_key_usage: 
+          - serverAuth
+          - clientAuth
+        common_name: 'webserver'
+        organization_name: 'EVT Challenge'
+        organizational_unit_name: 'Unit'
+        subject_alt_name: "IP:{{ gcp_ip_address }}"
+      tags:
+        - pki
+
+    - name: Generate Web Server certificate
+      openssl_certificate:
+        path: '{{ PKI_DIR }}/server.pem'
+        csr_path: '{{ PKI_DIR }}/server.csr'
+        ownca_path: '{{ PKI_DIR }}/ca.pem'
+        ownca_privatekey_path: '{{ PKI_DIR }}/ca-key.pem'
+        provider: ownca
+      tags:
+        - pki
+

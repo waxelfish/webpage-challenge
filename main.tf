@@ -29,9 +29,10 @@ resource "google_compute_instance" "vm_instance" {
   provisioner "local-exec" {
     command = <<EOT
     ssh-keyscan -t ecdsa -H ${google_compute_instance.vm_instance.network_interface.0.access_config.0.nat_ip} >> ~/.ssh/known_hosts
-    echo "webserver ansible_host=${google_compute_instance.vm_instance.network_interface.0.access_config.0.nat_ip}" > inv
-    ansible-playbook -i inv playbook.yml
+    echo "webserver PKI_DIR=\"./pki\" ansible_host=${google_compute_instance.vm_instance.network_interface.0.access_config.0.nat_ip}" > inv
     EOT
   }
 }
 
+#     ansible-playbook -i inv local_playbook.yml --tags pki -e "gcp_ip_address=${google_compute_instance.vm_instance.network_interface.0.access_config.0.nat_ip}"
+#    ssh-keyscan -t dsa -H ${google_compute_instance.vm_instance.network_interface.0.access_config.0.nat_ip} >> ~/.ssh/known_hosts

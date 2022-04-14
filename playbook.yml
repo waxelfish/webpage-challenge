@@ -2,8 +2,57 @@
 - hosts: all
   become: yes
 
-  tasks: 
-    - name: download static web page from bitbucket
+  tasks:
+    - name: Download static web page from bitbucket
       ansible.builtin.get_url:
         url: "https://bitbucket.org/bjgiller/evt-tech-challenge/raw/master/evt-web.html"
         dest: "/var/www/html/index.html"
+      tags:
+        - webpage
+
+    - name: Copy SSL key and x509 cert to destination
+      ansible.builtin.copy:
+        src: "{{ item }}"
+        dest: "/etc/nginx/ssl/"
+        owner: root
+        group: root
+        mode: 0644
+      loop:
+        - '{{ PKI_DIR }}/server-key.pem'
+        - '{{ PKI_DIR }}/server.pem'
+      tags:
+        - ssl
+      notify:
+      - Restart nginx
+
+    - name: Copy ssl config
+      copy:
+        src: "./ssl"
+        dest: "/etc/nginx/sites-available/"
+        owner: root
+        group: root
+        mode: 0644
+      tags:
+        - ssl
+      notify:
+      - Restart nginx
+
+    - name: Enable ssl server
+      ansible.builtin.file:
+        state: link
+        src: "/etc/nginx/sites-available/ssl"
+        dest: "/etc/nginx/sites-enabled/ssl"
+        owner: root
+        group: root
+        mode: 0644
+      tags:
+        - ssl
+      notify:
+      - Restart nginx
+
+  handlers:
+    - name: Restart nginx
+      ansible.builtin.systemd:
+        name: nginx
+        state: restarted
+  

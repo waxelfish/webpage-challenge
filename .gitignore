@@ -3,3 +3,4 @@ terraform.tfstate.backup
 inv
 .terraform.lock.hcl
 .terraform/**
+pki/**

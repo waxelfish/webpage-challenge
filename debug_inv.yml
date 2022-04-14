@@ -1,0 +1,9 @@
+---
+- hosts: all
+  gather_facts: no
+  tasks:
+    - name: Display all variables/facts known for a host
+      debug:
+       msg: 
+         - "Inventory Hostname: {{ inventory_hostname }}"
+         - "Inventory IP: {{ hostvars[inventory_hostname].ansible_host }}"
