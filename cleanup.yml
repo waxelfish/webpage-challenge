@@ -1,0 +1,27 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+
+  tasks: 
+    - name: Display all variables/facts known for a host
+      ansible.builtin.debug:
+       msg: 
+         - "Inventory Hostname: {{ inventory_hostname }}"
+         - "Inventory VARs: {{ PKI_DIR }}"
+      tags:
+        - debug
+
+    - name: Remove PKI directory
+      ansible.builtin.file:
+        path: "{{ PKI_DIR }}"
+        state: absent
+      tags:
+        - cleanup
+
+    - name: Remove inventory file
+      ansible.builtin.file:
+        path: "./inv"
+        state: absent
+      tags:
+        - cleanup
