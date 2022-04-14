@@ -5,7 +5,7 @@
 
   tasks: 
     - name: Display all variables/facts known for a host
-      debug:
+      ansible.builtin.debug:
        msg: 
          - "Inventory Hostname: {{ inventory_hostname }}"
          - "Inventory VARs: {{ PKI_DIR }}"
@@ -13,7 +13,7 @@
         - debug
 
     - name: Create PKI directory
-      file:
+      ansible.builtin.file:
         path: "{{ PKI_DIR }}"
         state: directory
       tags:
@@ -21,13 +21,13 @@
 
     ## Create CA
     - name: Generate CA private key
-      openssl_privatekey:
+      community.crypto.openssl_privatekey:
         path: "{{ PKI_DIR }}/ca-key.pem"
       tags:
         - pki
 
     - name: Generate CA CSR
-      openssl_csr:
+      community.crypto.openssl_csr:
         path: "{{ PKI_DIR }}/ca.csr"
         privatekey_path: "{{ PKI_DIR }}/ca-key.pem"
         basic_constraints: "CA:TRUE"
@@ -42,7 +42,7 @@
         - pki
 
     - name: Generate CA certificate
-      openssl_certificate:
+      community.crypto.x509_certificate:
         path: "{{ PKI_DIR }}/ca.pem"
         privatekey_path: "{{ PKI_DIR }}/ca-key.pem"
         csr_path: "{{ PKI_DIR }}/ca.csr"
@@ -50,15 +50,14 @@
       tags:
         - pki
 
-    ## kube api-server keys/certs
     - name: Generate Web Server private key
-      openssl_privatekey:
+      community.crypto.openssl_privatekey:
         path: "{{ PKI_DIR }}/server-key.pem"
       tags:
         - pki
 
     - name: Generate Web Server CSR
-      openssl_csr:
+      community.crypto.openssl_csr:
         path: "{{ PKI_DIR }}/server.csr"
         privatekey_path: "{{ PKI_DIR }}/server-key.pem"
         basic_constraints: "CA:FALSE"
@@ -78,7 +77,7 @@
         - pki
 
     - name: Generate Web Server certificate
-      openssl_certificate:
+      community.crypto.x509_certificate:
         path: "{{ PKI_DIR }}/server.pem"
         csr_path: "{{ PKI_DIR }}/server.csr"
         ownca_path: "{{ PKI_DIR }}/ca.pem"

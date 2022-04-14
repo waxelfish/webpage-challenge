@@ -3,7 +3,7 @@
   gather_facts: no
   tasks:
     - name: Display all variables/facts known for a host
-      debug:
+      ansible.builtin.debug:
        msg: 
          - "Inventory Hostname: {{ inventory_hostname }}"
          - "Inventory Remote Host: {{ hostvars[inventory_hostname].ansible_host }}"
