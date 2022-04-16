@@ -4,3 +4,5 @@ inv
 .terraform.lock.hcl
 .terraform/**
 pki/**
+deploy.sh
+deploy.log
