@@ -24,7 +24,7 @@
 
     - name: Remove the public key in the '{{ ssh_known_hosts_file }}'
       known_hosts:
-        name: "{{ gcp_ip_address }}"
+        name: "{{ hostvars['webserver'].ansible_host }}"
         path: "{{ ssh_known_hosts_file }}"
         state: absent
       tags:
