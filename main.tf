@@ -44,7 +44,7 @@ resource "google_compute_instance" "vm_instance" {
     command     = <<EOT
     echo "webserver ansible_host=${google_compute_instance.vm_instance.network_interface.0.access_config.0.nat_ip}" > inv
     echo -e "\n[all:vars]\nPKI_DIR=\"./pki\"\n" >> inv
-    ansible-playbook -i inv local_playbook.yml --tags "pki,ssh" -e "gcp_ip_address=${google_compute_instance.vm_instance.network_interface.0.access_config.0.nat_ip}"
+    ansible-playbook -i inv local_playbook.yml --tags "pki,ssh"
     ansible-playbook -i inv playbook.yml
     EOT
   }
