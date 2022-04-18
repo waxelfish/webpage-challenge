@@ -3,6 +3,11 @@
   connection: local
   gather_facts: no
 
+  vars:
+    ssh_known_hosts_command: "ssh-keyscan -T 10 -H"
+    ssh_known_hosts_file: "{{ lookup('env','HOME') + '/.ssh/known_hosts' }}"
+    ssh_known_hosts: "{{ groups['all'] }}"
+
   tasks: 
     - name: Display all variables/facts known for a host
       ansible.builtin.debug:
@@ -86,3 +91,19 @@
       tags:
         - pki
 
+    - name: Scan ssh public key from cloud VM
+      shell: "ssh-keyscan -T 10 -H {{ gcp_ip_address }}"
+      register: ssh_known_host_results
+      ignore_errors: yes
+      tags:
+        - ssh
+
+    - name: Add/update the public key in the '{{ ssh_known_hosts_file }}'
+      ansible.builtin.known_hosts:
+        name: "{{ gcp_ip_address }}"
+        key: "{{ ssh_known_host_results.stdout }}"
+        path: "{{ ssh_known_hosts_file }}"
+        state: present
+      tags:
+        - ssh
+      
